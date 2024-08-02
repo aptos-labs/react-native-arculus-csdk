@@ -7,6 +7,7 @@ import Button from '../components/Button';
 
 import { CARD_ALGORITHMS, CARD_CURVES } from '../constants';
 import { CMD, type RootStackParamList } from '../types';
+import ReactNativeArculusCsdk from '@aptos-labs/react-native-arculus-csdk';
 
 const OutputScreen = () => {
   const {
@@ -33,6 +34,27 @@ const OutputScreen = () => {
       `Executed ${command.name} with Input 1: ${input1} and Input 2: ${input2}`
     );
     switch (command.cmd) {
+      case CMD.GetGGUID:
+        ReactNativeArculusCsdk.getGGUID().then(setOutput);
+        break;
+      case CMD.GetVersion:
+        ReactNativeArculusCsdk.getVersion().then(setOutput);
+        break;
+      case CMD.VerifyPIN:
+        ReactNativeArculusCsdk.verifyPIN(input1).then(setOutput);
+        break;
+      case CMD.StorePIN:
+        ReactNativeArculusCsdk.storePIN(input1).then(setOutput);
+        break;
+      case CMD.UpdatePIN:
+        ReactNativeArculusCsdk.updatePIN(input1, input2).then(setOutput);
+        break;
+      case CMD.CreateWalletSeed:
+        ReactNativeArculusCsdk.createWalletSeed(input1, input2).then(setOutput);
+        break;
+      case CMD.CreateAptosWalletSeed:
+        ReactNativeArculusCsdk.createAptosWalletSeed(input1).then(setOutput);
+        break;
       default:
         break;
     }
