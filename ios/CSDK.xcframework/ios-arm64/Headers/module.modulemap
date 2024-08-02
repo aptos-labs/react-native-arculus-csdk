@@ -1,0 +1,5 @@
+module CSDK {
+    header "csdk.h"
+    header "csdk_types.h"
+    export *
+}
