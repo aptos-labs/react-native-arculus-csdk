@@ -1,30 +1,35 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from '@aptos-labs/react-native-arculus-csdk';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export default function App() {
-  const [result, setResult] = useState<number | undefined>();
+import CommandsScreen from './screens/CommandsScreen';
+import OutputScreen from './screens/OutputScreen';
 
-  useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+import type { RootStackParamList } from './types';
 
+const RootNativeStack = createNativeStackNavigator<RootStackParamList>();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <NavigationContainer>
+      <RootNativeStack.Navigator
+        screenOptions={{
+          headerShadowVisible: false,
+          headerBackTitle: 'Back',
+        }}
+      >
+        <RootNativeStack.Screen
+          name="Commands"
+          component={CommandsScreen}
+          options={{ title: '' }}
+        />
+        <RootNativeStack.Screen
+          name="Output"
+          component={OutputScreen}
+          options={({ route }) => ({ title: route.params.command.title })}
+        />
+      </RootNativeStack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
+export default App;
