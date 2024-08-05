@@ -43,4 +43,11 @@ class ReactNativeArculusCsdk: NSObject {
 
         nfcSessionManager.startSession(command: createAptosWalletSeedCommand, resolve: resolve, reject: reject)
     }
+
+    @objc(signAptosHash:withHash:withResolver:withRejecter:)
+    func signAptosHash(pin: String, hash: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        let signAptosHashCommand = SignAptosHashCommand(pin: pin, hash: hash)
+
+        nfcSessionManager.startSession(command: signAptosHashCommand, resolve: resolve, reject: reject)
+    }
 }

@@ -7,6 +7,7 @@ export enum CMD {
   ResetWallet,
   VerifyPIN,
   SignHashPath,
+  SignAptosHash,
   UpdatePIN,
   StorePIN,
   GetPubKeyByPath,

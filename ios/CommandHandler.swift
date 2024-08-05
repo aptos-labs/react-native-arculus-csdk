@@ -13,8 +13,7 @@ class GetGGUIDCommand: Command {
         cardService.getGGUID(tag: tag) { result in
             switch result {
             case .success(let gguid):
-                let response = dump(data: gguid)
-                completion(.success(response))
+                completion(.success(dump(data: gguid)))
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -118,6 +117,56 @@ class CreateAptosWalletSeedCommand: Command {
                         completion(.success(words))
                     }
                 }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+private func strToData(_ hexStr: String) -> Data? {
+    if let arr = strToArr(hexStr) {
+        return Data(arr)
+    } else {
+        return nil
+    }
+}
+
+private func strToArr(_ hexStr: String) -> [UInt8]? {
+    var arr: [UInt8] = []
+    var val: UInt8 = 0
+    if hexStr.count % 2 != 0 {
+        return nil
+    }
+    for (ii, c) in hexStr.enumerated() {
+        guard let v = UInt8(String(c), radix: 16) else { return nil }
+        if ii % 2 == 0 {
+            val = v
+        } else {
+            val = val << 4 | v
+            arr.append(val)
+            val = 0
+        }
+    }
+    return arr
+}
+
+class SignAptosHashCommand: Command {
+    private let pin: String
+    private let hash: String
+
+    init(pin: String, hash: String) {
+        self.pin = pin
+        self.hash = hash
+    }
+
+    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
+        guard let hashData = strToData(hash) else { return }
+
+        cardService.signHashPath(tag: tag, pin: pin, path: "m/44'/637'/0'/0'/0'", curve: CardCurve.ed25519, algorithm: CardAlgorithm.eddsa, hash: hashData) { result in
+            switch result {
+            case .success(let signedHash):
+                completion(.success(dump(data: signedHash, sep: "")))
             case .failure(let error):
                 completion(.failure(error))
             }

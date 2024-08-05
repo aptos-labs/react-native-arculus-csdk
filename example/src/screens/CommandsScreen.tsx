@@ -117,6 +117,13 @@ const sections: ReadonlyArray<SectionListData<Command, { title: string }>> = [
         inp2: 'Hash (hex)',
         out: 'Signed Hash',
       },
+      {
+        cmd: CMD.SignAptosHash,
+        name: 'Sign Aptos Hash',
+        inp1: 'PIN',
+        inp2: 'Hash (hex)',
+        out: 'Signed Hash',
+      },
     ],
   },
 ];

@@ -20,6 +20,7 @@ const OutputScreen = () => {
       case CMD.CreateWalletSeed:
         return '12';
       case CMD.SignHashPath:
+      case CMD.SignAptosHash:
         return 'EA83CDCDD06BF61E414054115A551E23133711D0507DCBC07A4BAB7DC4581935';
       default:
         return '';
@@ -46,6 +47,8 @@ const OutputScreen = () => {
           return await ReactNativeArculusCsdk.createWalletSeed(input1, input2);
         case CMD.CreateAptosWalletSeed:
           return await ReactNativeArculusCsdk.createAptosWalletSeed(input1);
+        case CMD.SignAptosHash:
+          return await ReactNativeArculusCsdk.signAptosHash(input1, input2);
         default:
           break;
       }

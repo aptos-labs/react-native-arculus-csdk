@@ -9,6 +9,7 @@ type ReactNativeArculusCsdkType = {
   updatePIN(oldPin: string, newPin: string): Promise<any>;
   createWalletSeed(pin: string, wordCount: string): Promise<any>;
   createAptosWalletSeed(pin: string): Promise<any>;
+  signAptosHash(pin: string, hash: string): Promise<any>;
 };
 
 const LINKING_ERROR =
