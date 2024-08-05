@@ -1,6 +1,4 @@
-
 enum CoinType: UInt16, CaseIterable {
-    
     case aptos
     case bitcoin
     case bitcoinCash

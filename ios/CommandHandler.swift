@@ -109,12 +109,18 @@ class CreateAptosWalletSeedCommand: Command {
                     completion(.failure(CardReaderError.operationFailed))
                     return
                 }
-                self.cardService.finishCreateWalletSeed(tag: tag, pin: self.pin, seed: seed) { result in
-                    switch result {
-                    case .failure(let error):
+                self.cardService.finishCreateWalletSeed(tag: tag, pin: self.pin, seed: seed) { [weak self] result in
+                    guard let self = self,
+                          let (curve, _) = CoinType.aptos.cardCurveAlgo,
+                          let hardenedPath = CoinType.aptos.hardenedPath else {
+                        completion(.failure(CardReaderError.operationFailed))
+                        return
+                    }
+
+                    self.cardService.getPublicKeyByPathv2(tag: tag, path: hardenedPath, curve: curve).done { pubKey in
+                        completion(.success(["words": words, "pubKey": dump(data: pubKey.publicKey)]))
+                    }.catch { error in
                         completion(.failure(error))
-                    case .success:
-                        completion(.success(words))
                     }
                 }
             case .failure(let error):
