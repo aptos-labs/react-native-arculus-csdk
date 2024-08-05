@@ -1,6 +1,6 @@
 
 enum CoinType: UInt16, CaseIterable {
-
+    
     case aptos
     case bitcoin
     case bitcoinCash
@@ -12,11 +12,11 @@ enum CoinType: UInt16, CaseIterable {
     case solana
     case stellar
     case hedera
-
+    
     var val: UInt16 {
         return self.rawValue
     }
-
+    
     var curve: CardCurve {
         switch self{
         case.aptos:
@@ -43,7 +43,7 @@ enum CoinType: UInt16, CaseIterable {
             return CardCurve.ed25519
         }
     }
-
+    
     // Determine card curve/default hash algorithm curve
     var cardCurveAlgo: (CardCurve, CardAlgorithm)? {
         switch self.curve {
@@ -55,7 +55,7 @@ enum CoinType: UInt16, CaseIterable {
         default: return nil
         }
     }
-
+    
     func derivationPath() -> String {
         switch self{
         case.aptos:
@@ -82,9 +82,21 @@ enum CoinType: UInt16, CaseIterable {
             return "m/44'/60'/0'/0"
         }
     }
-
+    
     var hardenedPath: String? {
         return self.derivationPath()
     }
+}
 
+public func dump(data: Data?, sep: String = "") -> String {
+    var str = ""
+    if let data = data {
+        for c in data {
+            str += String(format: "%02X", c)
+            str += sep
+        }
+    } else {
+        str = "None"
+    }
+    return str
 }

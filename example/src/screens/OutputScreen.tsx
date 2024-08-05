@@ -29,35 +29,37 @@ const OutputScreen = () => {
   const [hashAlgorithm, setHashAlgorithm] = useState<number>();
   const [output, setOutput] = useState('');
 
-  const handleExecute = () => {
+  const execute = async () => {
+    try {
+      switch (command.cmd) {
+        case CMD.GetGGUID:
+          return await ReactNativeArculusCsdk.getGGUID();
+        case CMD.GetVersion:
+          return await ReactNativeArculusCsdk.getVersion();
+        case CMD.VerifyPIN:
+          return await ReactNativeArculusCsdk.verifyPIN(input1);
+        case CMD.StorePIN:
+          return await ReactNativeArculusCsdk.storePIN(input1);
+        case CMD.UpdatePIN:
+          return await ReactNativeArculusCsdk.updatePIN(input1, input2);
+        case CMD.CreateWalletSeed:
+          return await ReactNativeArculusCsdk.createWalletSeed(input1, input2);
+        case CMD.CreateAptosWalletSeed:
+          return await ReactNativeArculusCsdk.createAptosWalletSeed(input1);
+        default:
+          break;
+      }
+    } catch (e) {
+      return e;
+    }
+  };
+
+  const handleExecute = async () => {
     setOutput(
       `Executed ${command.name} with Input 1: ${input1} and Input 2: ${input2}`
     );
-    switch (command.cmd) {
-      case CMD.GetGGUID:
-        ReactNativeArculusCsdk.getGGUID().then(setOutput);
-        break;
-      case CMD.GetVersion:
-        ReactNativeArculusCsdk.getVersion().then(setOutput);
-        break;
-      case CMD.VerifyPIN:
-        ReactNativeArculusCsdk.verifyPIN(input1).then(setOutput);
-        break;
-      case CMD.StorePIN:
-        ReactNativeArculusCsdk.storePIN(input1).then(setOutput);
-        break;
-      case CMD.UpdatePIN:
-        ReactNativeArculusCsdk.updatePIN(input1, input2).then(setOutput);
-        break;
-      case CMD.CreateWalletSeed:
-        ReactNativeArculusCsdk.createWalletSeed(input1, input2).then(setOutput);
-        break;
-      case CMD.CreateAptosWalletSeed:
-        ReactNativeArculusCsdk.createAptosWalletSeed(input1).then(setOutput);
-        break;
-      default:
-        break;
-    }
+
+    setOutput(JSON.stringify(await execute(), null, 2));
   };
 
   return (
