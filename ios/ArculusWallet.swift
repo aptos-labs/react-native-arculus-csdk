@@ -67,7 +67,6 @@ public enum CardCurve: UInt16, CaseIterable {
     static var allNames: [String] {
         return allCases.map {String(describing:$0)}
     }
-    
 }
 
 public func getCurveFromString(curveString: String) -> CardCurve {

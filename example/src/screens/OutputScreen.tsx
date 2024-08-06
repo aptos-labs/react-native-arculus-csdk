@@ -7,7 +7,7 @@ import Button from '../components/Button';
 
 import { CARD_ALGORITHMS, CARD_CURVES } from '../constants';
 import { CMD, type RootStackParamList } from '../types';
-import ReactNativeArculusCsdk from '@aptos-labs/react-native-arculus-csdk';
+import { Arculus } from '@aptos-labs/react-native-arculus-csdk';
 
 const OutputScreen = () => {
   const {
@@ -15,17 +15,7 @@ const OutputScreen = () => {
   } = useRoute<RouteProp<RootStackParamList, 'Output'>>();
 
   const [input1, setInput1] = useState('');
-  const [input2, setInput2] = useState(() => {
-    switch (command.cmd) {
-      case CMD.CreateWalletSeed:
-        return '12';
-      case CMD.SignHashPath:
-      case CMD.SignAptosHash:
-        return 'EA83CDCDD06BF61E414054115A551E23133711D0507DCBC07A4BAB7DC4581935';
-      default:
-        return '';
-    }
-  });
+  const [input2, setInput2] = useState('');
   const [curveType, setCurveType] = useState<number>();
   const [hashAlgorithm, setHashAlgorithm] = useState<number>();
   const [output, setOutput] = useState('');
@@ -34,27 +24,32 @@ const OutputScreen = () => {
     try {
       switch (command.cmd) {
         case CMD.GetGGUID:
-          return await ReactNativeArculusCsdk.getGGUID();
+          return await Arculus.getGGUID();
         case CMD.GetVersion:
-          return await ReactNativeArculusCsdk.getVersion();
+          return await Arculus.getVersion();
         case CMD.VerifyPIN:
-          return await ReactNativeArculusCsdk.verifyPIN(input1);
+          return await Arculus.verifyPIN(input1);
         case CMD.StorePIN:
-          return await ReactNativeArculusCsdk.storePIN(input1);
+          return await Arculus.storePIN(input1);
         case CMD.UpdatePIN:
-          return await ReactNativeArculusCsdk.updatePIN(input1, input2);
-        case CMD.CreateWalletSeed:
-          return await ReactNativeArculusCsdk.createWalletSeed(input1, input2);
+          return await Arculus.updatePIN(input1, input2);
         case CMD.CreateAptosWalletSeed:
-          return await ReactNativeArculusCsdk.createAptosWalletSeed(input1);
+          return await Arculus.createAptosWalletSeed(input1);
         case CMD.SignAptosHash:
-          return await ReactNativeArculusCsdk.signAptosHash(input1, input2);
+          return await Arculus.signAptosHash(input1, input2);
+        case CMD.GetAptosPubKey:
+          return await Arculus.getAptosPubKey();
         default:
           break;
       }
     } catch (e) {
+      if (e instanceof Error) {
+        return e.message;
+      }
+
       return e;
     }
+    return 'Invalid Command';
   };
 
   const handleExecute = async () => {

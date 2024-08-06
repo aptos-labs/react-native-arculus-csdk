@@ -11,6 +11,7 @@ export enum CMD {
   UpdatePIN,
   StorePIN,
   GetPubKeyByPath,
+  GetAptosPubKey,
 }
 
 export type Command = {

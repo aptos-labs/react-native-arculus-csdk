@@ -2,11 +2,110 @@ import CoreNFC
 
 class Command {
     fileprivate var cardService = CardService()
-
+    
     func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
         fatalError("This method must be overridden")
     }
 }
+
+class CreateWalletSeedCommand: Command {
+    private let pin: String
+    private let wordCount: Int
+    private let path: String
+    private let curve: String
+    
+    init(pin: String, wordCount: Int, path: String, curve: String) {
+        self.pin = pin
+        self.wordCount = wordCount
+        self.path = path
+        self.curve = curve
+    }
+    
+    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
+        cardService.startCreateWalletSeed(tag: tag, pin: pin, wordCount: wordCount) { result in
+            switch result {
+            case .success(let words):
+                guard let seed = self.cardService.seedFromWords(words: words) else {
+                    completion(.failure(CardReaderError.operationFailed))
+                    return
+                }
+                self.cardService.finishCreateWalletSeed(tag: tag, pin: self.pin, seed: seed) { [weak self] result in
+                    guard let self = self else {
+                        completion(.failure(CardReaderError.operationFailed))
+                        return
+                    }
+                    
+                    self.cardService.getPublicKeyByPathv2(tag: tag, path: path, curve: getCurveFromString(curveString: curve)).done { pubKey in
+                        completion(.success(["words": words, "pubKey": dump(data: pubKey.publicKey)]))
+                    }.catch { error in
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+class GetPubKeyByPathCommand: Command {
+    private let path: String
+    private let curve: String
+    
+    init(path: String, curve: String) {
+        self.path = path
+        self.curve = curve
+    }
+    
+    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
+        cardService.getPubKeyByPath(tag: tag, path: path, curve: getCurveFromString(curveString: curve)) { result in
+            switch result {
+            case .success(let pubKey):
+                completion(.success(dump(data: pubKey.publicKey)))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+class SignHashByPathCommand: Command {
+    private let pin: String
+    private let path: String
+    private let curve: String
+    private let algorithm: String
+    private let hash: String
+    
+    init(pin: String, path: String, curve: String, algorithm: String, hash: String) {
+        self.pin = pin
+        self.path = path
+        self.curve = curve
+        self.algorithm = algorithm
+        self.hash = hash
+    }
+    
+    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
+        guard let hashData = strToData(hash) else { return }
+        
+        cardService.signHashPath(
+            tag: tag,
+            pin: pin,
+            path: path,
+            curve: getCurveFromString(curveString: curve),
+            algorithm: getHashAlgorithmFromString(hashAlgorithmString: algorithm),
+            hash: hashData
+        ) { result in
+            switch result {
+            case .success(let signedHash):
+                completion(.success(dump(data: signedHash)))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+//
 
 class GetGGUIDCommand: Command {
     override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
@@ -36,11 +135,11 @@ class GetVersionCommand: Command {
 
 class VerifyPINCommand: Command {
     private let pin: String
-
+    
     init(pin: String) {
         self.pin = pin
     }
-
+    
     override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
         cardService.verifyPin(tag: tag, pin: pin) { result in
             switch result {
@@ -55,11 +154,11 @@ class VerifyPINCommand: Command {
 
 class StorePINCommand: Command {
     private let pin: String
-
+    
     init(pin: String) {
         self.pin = pin
     }
-
+    
     override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
         cardService.storePin(tag: tag, pin: pin) { result in
             switch result {
@@ -75,54 +174,17 @@ class StorePINCommand: Command {
 class UpdatePINCommand: Command {
     private let oldPin: String
     private let newPin: String
-
+    
     init(oldPin: String, newPin: String) {
         self.oldPin = oldPin
         self.newPin = newPin
     }
-
+    
     override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
         cardService.updatePin(tag: tag, oldPin: oldPin, newPin: newPin) { result in
             switch result {
             case .success(let data):
                 completion(.success(data))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-}
-
-
-class CreateAptosWalletSeedCommand: Command {
-    private let pin: String
-
-    init(pin: String) {
-        self.pin = pin
-    }
-
-    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
-        cardService.startCreateWalletSeed(tag: tag, pin: pin, wordCount: 12) { result in
-            switch result {
-            case .success(let words):
-                guard let seed = self.cardService.seedFromWords(words: words) else {
-                    completion(.failure(CardReaderError.operationFailed))
-                    return
-                }
-                self.cardService.finishCreateWalletSeed(tag: tag, pin: self.pin, seed: seed) { [weak self] result in
-                    guard let self = self,
-                          let (curve, _) = CoinType.aptos.cardCurveAlgo,
-                          let hardenedPath = CoinType.aptos.hardenedPath else {
-                        completion(.failure(CardReaderError.operationFailed))
-                        return
-                    }
-
-                    self.cardService.getPublicKeyByPathv2(tag: tag, path: hardenedPath, curve: curve).done { pubKey in
-                        completion(.success(["words": words, "pubKey": dump(data: pubKey.publicKey)]))
-                    }.catch { error in
-                        completion(.failure(error))
-                    }
-                }
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -155,27 +217,4 @@ private func strToArr(_ hexStr: String) -> [UInt8]? {
         }
     }
     return arr
-}
-
-class SignAptosHashCommand: Command {
-    private let pin: String
-    private let hash: String
-
-    init(pin: String, hash: String) {
-        self.pin = pin
-        self.hash = hash
-    }
-
-    override func execute(tag: NFCISO7816Tag, completion: @escaping (Result<Any, Error>) -> Void) {
-        guard let hashData = strToData(hash) else { return }
-
-        cardService.signHashPath(tag: tag, pin: pin, path: "m/44'/637'/0'/0'/0'", curve: CardCurve.ed25519, algorithm: CardAlgorithm.eddsa, hash: hashData) { result in
-            switch result {
-            case .success(let signedHash):
-                completion(.success(dump(data: signedHash, sep: "")))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
 }

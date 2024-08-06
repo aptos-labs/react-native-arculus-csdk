@@ -1,15 +1,27 @@
 import { NativeModules, Platform } from 'react-native';
 
+import type { CardAlgorithm, CardCurve } from './types';
+
 type ReactNativeArculusCsdkType = {
-  multiply(a: number, b: number): Promise<number>;
-  getGGUID(): Promise<any>;
-  getVersion(): Promise<any>;
-  verifyPIN(pin: string): Promise<any>;
-  storePIN(pin: string): Promise<any>;
-  updatePIN(oldPin: string, newPin: string): Promise<any>;
-  createWalletSeed(pin: string, wordCount: string): Promise<any>;
-  createAptosWalletSeed(pin: string): Promise<any>;
-  signAptosHash(pin: string, hash: string): Promise<any>;
+  createWalletSeed(
+    pin: string,
+    wordCount: number,
+    path: string,
+    curve: CardCurve
+  ): Promise<string>;
+  getGGUID(): Promise<string>;
+  getPubKeyByPath(path: string, curve: CardCurve): Promise<string>;
+  getVersion(): Promise<string>;
+  signHashByPath(
+    pin: string,
+    path: string,
+    curve: CardCurve,
+    algorithm: CardAlgorithm,
+    hash: string
+  ): Promise<string>;
+  storePIN(pin: string): Promise<boolean>;
+  updatePIN(oldPin: string, newPin: string): Promise<boolean>;
+  verifyPIN(pin: string): Promise<boolean>;
 };
 
 const LINKING_ERROR =

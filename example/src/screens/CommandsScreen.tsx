@@ -105,6 +105,13 @@ const sections: ReadonlyArray<SectionListData<Command, { title: string }>> = [
         inp2: 'Curve (0100, etc.)',
         out: 'PubKey',
       },
+      {
+        cmd: CMD.GetAptosPubKey,
+        name: 'Get Aptos PubKey',
+        inp1: null,
+        inp2: null,
+        out: 'PubKey',
+      },
     ],
   },
   {
