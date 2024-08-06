@@ -1,19 +1,51 @@
-#import "ReactNativeArculusCsdk.h"
+#import <React/RCTBridgeModule.h>
 
-@implementation ReactNativeArculusCsdk
-RCT_EXPORT_MODULE()
+@interface RCT_EXTERN_MODULE(ReactNativeArculusCsdk, NSObject)
 
-// Example method
-// See // https://reactnative.dev/docs/native-modules-ios
-RCT_EXPORT_METHOD(multiply:(double)a
-                  b:(double)b
-                  resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(changePIN:(nonnull NSString *)oldPIN
+                  withNewPIN:(nonnull NSString *)newPIN
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(createWallet:(nonnull NSString *)pin
+                  withNumberOfWords:(nonnull NSNumber *)nbrOfWords
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getFirmwareVersion:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getGGUID:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPublicKeyFromPath:(nonnull NSString *)path
+                  withCurve:(nonnull NSNumber *)curve
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(resetWallet:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(restoreWallet:(nonnull NSString *)pin
+                  withMnemonicSentence:(nonnull NSString *)mnemonicSentence
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(signHash:(nonnull NSString *)pin
+                  withPath:(nonnull NSString *)path
+                  withCurve:(nonnull NSNumber *)curve
+                  withAlgorithm:(nonnull NSNumber *)algorithm
+                  withHash:(nonnull NSString *)hash
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(verifyPIN:(nonnull NSString *)pin
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
++ (BOOL)requiresMainQueueSetup
 {
-    NSNumber *result = @(aptoslabs_reactnativearculuscsdk::multiply(a, b));
-
-    resolve(result);
+    return NO;
 }
-
 
 @end

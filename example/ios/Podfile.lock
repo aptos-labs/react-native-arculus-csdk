@@ -1752,7 +1752,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  aptos-labs-react-native-arculus-csdk: 3681b6e2e8f9501decba0baf161dd464d6c06517
+  aptos-labs-react-native-arculus-csdk: a5aa7e7f08e1d45b17c1ca25620977eb7fcb0e49
   boost: 4cb898d0bf20404aab1850c656dcea009429d6c1
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: a3071c12f1650bfa84f2815e9982426256a0aae1

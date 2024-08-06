@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/aptos-labs/react-native-arculus-csdk.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm}", "cpp/**/*.{hpp,cpp,c,h}"
+  s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.exclude_files = "ios/**/*.xcframework/**/*"
 
