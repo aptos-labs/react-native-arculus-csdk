@@ -8,113 +8,98 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AptosCard, ArculusCard } from '@aptos-labs/react-native-arculus-csdk';
 
 import { type Command, type RootStackParamList } from '../types';
 
 const sections: ReadonlyArray<SectionListData<Command, { title: string }>> = [
   {
-    title: 'CARD BASICS',
+    title: 'ARCULUS CARD',
     data: [
       {
-        title: 'Get Card GGUID',
-        handler: async () => 'not implemented',
-        output: 'Card GGUID',
+        title: 'Change PIN',
+        inputs: ['oldPIN', 'newPIN'],
+        handler: ArculusCard.changePIN,
+        output: '',
       },
       {
-        title: 'Get Firmware Vers',
-        handler: async () => 'not implemented',
+        title: 'Create wallet',
+        inputs: ['pin', 'nbrOfWords'],
+        handler: ({ wordCount, ...args }) =>
+          ArculusCard.createWallet({
+            ...args,
+            wordCount: Number(wordCount),
+          }),
+        output: 'Phrase',
+      },
+      {
+        title: 'Get firmware version',
+        handler: ArculusCard.getFirmwareVersion,
         output: 'Firmware Version',
+      },
+      {
+        title: 'Get GGUID',
+        handler: ArculusCard.getGGUID,
+        output: 'GGUID',
+      },
+      {
+        title: 'Get public key from path',
+        inputs: ['path', 'curve'],
+        handler: ({ curve, ...args }) =>
+          ArculusCard.getPublicKeyFromPath({ ...args, curve: Number(curve) }),
+        output: 'Public key',
+      },
+      {
+        title: 'Reset wallet',
+        inputs: [],
+        handler: ArculusCard.resetWallet,
+        output: '',
+      },
+      {
+        title: 'Restore wallet',
+        inputs: ['pin', 'mnemonicSentence'],
+        handler: ArculusCard.restoreWallet,
+        output: '',
+      },
+      {
+        title: 'Sign hash',
+        inputs: ['pin', 'path', 'curve', 'algorithm', 'hash'],
+        handler: ({ curve, algorithm, ...args }) =>
+          ArculusCard.signHash({
+            ...args,
+            curve: Number(curve),
+            algorithm: Number(algorithm),
+          }),
+        output: 'Signed hash',
       },
       {
         title: 'Verify PIN',
         inputs: ['pin'],
-        handler: async () => 'not implemented',
-        output: 'Output',
+        handler: ArculusCard.verifyPIN,
+        output: '',
       },
+    ],
+  },
+  {
+    title: 'APTOS CARD',
+    data: [
       {
-        title: 'Store PIN',
+        title: 'Create wallet',
         inputs: ['pin'],
-        handler: async () => 'not implemented',
-        output: 'Output',
+        handler: AptosCard.createWallet,
+        output: 'Phrase',
       },
       {
-        title: 'Update PIN',
-        inputs: ['oldPin', 'newPin'],
-        handler: async () => 'not implemented',
-        output: 'Status',
-      },
-    ],
-  },
-  {
-    title: 'CREATE WALLET',
-    data: [
-      {
-        title: 'Create Wallet (Seed)',
-        inputs: ['pin', 'wordCount', 'path', 'curve'],
-        handler: async () => 'not implemented',
-        output: 'New Phrase/Keys',
-      },
-      {
-        title: 'Create Aptos Wallet (Seed)',
-        inputs: ['pin'],
-        handler: async () => 'not implemented',
-        output: 'New Phrase/Keys',
-      },
-    ],
-  },
-  {
-    title: 'RESTORE WALLET',
-    data: [
-      {
-        title: 'Restore Wallet (Seed)',
-        inputs: ['pin', 'words', 'path', 'curve'],
-        handler: async () => 'not implemented',
-        output: 'Keys',
-      },
-    ],
-  },
-  {
-    title: 'RESET WALLET',
-    data: [
-      {
-        title: 'Reset Wallet',
+        title: 'Get public key',
         inputs: [],
-        handler: async () => 'not implemented',
-        output: 'Status',
-      },
-    ],
-  },
-  {
-    title: 'PUBLIC KEYS',
-    data: [
-      {
-        title: 'Get PubKey By Path',
-        inputs: ['path', 'curve'],
-        handler: async () => 'not implemented',
-        output: 'PubKey',
+        handler: AptosCard.getPublicKey,
+        output: 'Public key',
       },
       {
-        title: 'Get Aptos PubKey',
-        inputs: [],
-        handler: async () => 'not implemented',
-        output: 'PubKey',
-      },
-    ],
-  },
-  {
-    title: 'SIGN HASH DATA',
-    data: [
-      {
-        title: 'Sign Hash By Path',
-        inputs: ['pin', 'path', 'curve', 'algorithm', 'hash'],
-        handler: async () => 'not implemented',
-        output: 'Signed Hash',
-      },
-      {
-        title: 'Sign Aptos Hash',
+        title: 'Sign hash',
         inputs: ['pin', 'hash'],
-        handler: async () => 'not implemented',
-        output: 'Signed Hash',
+        handler: AptosCard.signHash,
+        output: 'Signed hash',
       },
     ],
   },
