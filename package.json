@@ -121,6 +121,9 @@
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
+    },
+    "hooks": {
+      "after:bump": "cd example/ios && bundle exec pod install"
     }
   },
   "eslintConfig": {
