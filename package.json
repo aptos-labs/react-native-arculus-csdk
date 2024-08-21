@@ -60,6 +60,7 @@
   },
   "homepage": "https://github.com/aptos-labs/react-native-arculus-csdk#readme",
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
