@@ -3,7 +3,7 @@ package com.aptoslabs.arculus.csdk
 import com.sun.jna.Pointer
 
 class WalletInitSession(wallet: Pointer) : CSDKAPICall<Unit>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val len = SizeTByReference()
 
     val pointer = CSDK.WalletInitSessionRequest(wallet, len)

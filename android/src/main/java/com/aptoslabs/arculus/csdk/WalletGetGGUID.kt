@@ -3,7 +3,7 @@ package com.aptoslabs.arculus.csdk
 import com.sun.jna.Pointer
 
 class WalletGetGGUID(wallet: Pointer) : CSDKAPICall<String>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val len = SizeTByReference()
 
     val pointer = CSDK.WalletGetGGUIDRequest(wallet, len)

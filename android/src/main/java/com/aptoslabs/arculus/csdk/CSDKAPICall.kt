@@ -76,7 +76,7 @@ abstract class CSDKAPICall<ResponseType>(wallet: Pointer) : CSDKAPICommand<Respo
     throw Error("execute() must not be called - use execute(tag:) instead")
   }
 
-  open suspend fun request(): Array<ByteArray> {
+  open suspend fun request(): Array<ByteArray?> {
     throw NotImplementedError("request must be overridden")
   }
 

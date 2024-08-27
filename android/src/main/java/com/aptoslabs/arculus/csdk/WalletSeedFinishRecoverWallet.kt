@@ -4,7 +4,7 @@ import com.sun.jna.Pointer
 
 class WalletSeedFinishRecoverWallet(wallet: Pointer, private val seed: ByteArray) :
   CSDKAPICall<Unit>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val len = SizeTByReference()
 
     val pointer = CSDK.WalletSeedFinishRecoverWalletRequest(wallet, seed, seed.size, len)

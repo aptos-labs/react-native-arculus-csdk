@@ -6,7 +6,7 @@ class WalletVerifyPIN(wallet: Pointer, private val pin: String) : CSDKAPICall<Un
   private class WalletVerifyPINException(tries: Int) :
     Exception("Wrong PIN. $tries tries remaining.")
 
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val pinBytes = pin.encodeToByteArray()
 
     val len = SizeTByReference()

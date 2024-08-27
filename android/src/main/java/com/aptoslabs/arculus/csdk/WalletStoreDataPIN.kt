@@ -3,7 +3,7 @@ package com.aptoslabs.arculus.csdk
 import com.sun.jna.Pointer
 
 class WalletStoreDataPIN(wallet: Pointer, private val pin: String) : CSDKAPICall<Unit>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val pinBytes = pin.encodeToByteArray()
 
     val len = SizeTByReference()

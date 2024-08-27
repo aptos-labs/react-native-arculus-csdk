@@ -16,7 +16,7 @@ class WalletSelectWallet(
     V2(byteArrayOf(0x41, 0x52, 0x43, 0x55, 0x4C, 0x55, 0x53, 0x01, 0x01, 0x57))
   }
 
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val len = SizeTByReference()
 
     val pointer = CSDK.WalletSelectWalletRequest(wallet, applicationAID.aid, len)

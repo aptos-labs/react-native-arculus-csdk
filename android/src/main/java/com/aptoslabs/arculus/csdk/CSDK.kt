@@ -11,6 +11,87 @@ import com.sun.jna.ptr.PointerByReference
 object CSDK {
   private val LIBRARY: NativeLibrary = NativeLibrary.getInstance("csdk")
 
+  @Structure.FieldOrder("count", "addr")
+  class ByteVector(pointer: Pointer?) : Structure(pointer) {
+    @JvmField
+    var count: Int = 0
+
+    @JvmField
+    var addr: Pointer? = null
+
+    init {
+      read()
+    }
+
+    constructor(bytes: ByteArray) : this(null) {
+      val m = Memory(bytes.size.toLong())
+      m.write(0, bytes, 0, bytes.size)
+      allocateMemory()
+      addr = m
+      count = bytes.size
+      write()
+    }
+
+    override fun getFieldOrder(): List<String> {
+      return listOf("count", "addr")
+    }
+  }
+
+  @Structure.FieldOrder("count", "apdu", "extended_apdu")
+  class APDUSequence(pointer: Pointer?) : Structure(pointer) {
+    @JvmField
+    var count: Int = 0
+
+    @JvmField
+    var apdu: Pointer? = null // Pointer to array of ByteVector C structs
+
+    @JvmField
+    var extended_apdu: Boolean = false
+
+    init {
+      useMemory(pointer)
+      read()
+    }
+
+    override fun getFieldOrder(): List<String> {
+      return listOf("count", "apdu", "extended_apdu")
+    }
+
+    fun GetChain(): Array<ByteArray?> {
+      val byteVectorSize = Native.getNativeSize(ByteVector::class.java)
+      return Array(count) { index ->
+        val byteVectorPointer = apdu?.share((index * byteVectorSize).toLong())
+        val byteVector = ByteVector(byteVectorPointer)
+        val byteArray = byteVector.addr?.getByteArray(0, byteVector.count)
+        byteArray
+      }
+    }
+  }
+
+  fun GetByteVectorFromPointer(ptr: Pointer): ByteVector {
+    return ByteVector(ptr)
+  }
+
+  fun CreateByteVector(bytes: ByteArray): Pointer {
+    val m = Memory(bytes.size.toLong())
+    m.write(0, bytes, 0, bytes.size)
+    val byteVector = ByteVector(bytes)
+    return byteVector.pointer
+  }
+
+  fun GetAPDUSequenceFromResult(result: PointerByReference): APDUSequence {
+    val resultPtr = result.value
+    return APDUSequence(resultPtr)
+  }
+
+  fun CheckPartialAPDUChainResult(nfcResult: ByteArray): Boolean {
+    return if (nfcResult.size == 2) {
+      nfcResult[0] == 0x90.toByte() && nfcResult[1] == 0x00.toByte()
+    } else {
+      false
+    }
+  }
+
   const val CARD_CURVE_DEFAULT: Short = 0
   const val CARD_CURVE_SECP256K1: Short = 0x0100
   const val CARD_CURVE_ED25519: Short = 0x0201
@@ -36,25 +117,7 @@ object CSDK {
     )
   }
 
-  fun getByteVectorFromPointer(ptr: Pointer): ByteVector =
-    ByteVector(ptr)
-
-  fun createByteVector(bytes: ByteArray): Pointer {
-    val memory = Memory(bytes.size.toLong()).apply { write(0, bytes, 0, bytes.size) }
-    return ByteVector(memory).pointer
-  }
-
-  fun getAPDUSequenceFromResult(result: PointerByReference): APDUSequence {
-    val resultPtr = result.value
-    return APDUSequence(resultPtr)
-  }
-
-  fun checkPartialAPDUChainResult(nfcResult: ByteArray): Boolean {
-    return nfcResult.size == 2 && nfcResult[0] == 0x90.toByte() && nfcResult[1] == 0x00.toByte()
-  }
-
   external fun WalletInit(): Pointer
-
   external fun WalletFree(wallet: Pointer): Int
 
   external fun WalletGetApplicationAID(
@@ -62,6 +125,9 @@ object CSDK {
     bytesCount: SizeTByReference
   ): Pointer
 
+  /**
+   * Personalization stage
+   */
   external fun WalletCreateWalletRequest(
     wallet: Pointer,
     bytesCount: SizeTByReference,
@@ -124,22 +190,20 @@ object CSDK {
     length: Int
   ): Int
 
-  external fun WalletInitSessionRequest(
-    wallet: Pointer,
-    len: SizeTByReference
-  ): Pointer
-
+  /**
+   * Session encryption commands
+   */
+  external fun WalletInitSessionRequest(wallet: Pointer, len: SizeTByReference): Pointer
   external fun WalletInitSessionResponse(
     wallet: Pointer,
     response: ByteArray,
     ResponseLength: Int
   ): Int
 
-  external fun WalletGetGGUIDRequest(
-    wallet: Pointer,
-    len: SizeTByReference
-  ): Pointer
-
+  /**
+   * Use Wallet
+   */
+  external fun WalletGetGGUIDRequest(wallet: Pointer, len: SizeTByReference): Pointer
   external fun WalletGetGGUIDResponse(
     wallet: Pointer,
     response: ByteArray,
@@ -147,11 +211,7 @@ object CSDK {
     GGUIDLength: SizeTByReference
   ): Pointer
 
-  external fun WalletGetFirmwareVersionRequest(
-    wallet: Pointer,
-    len: SizeTByReference
-  ): Pointer
-
+  external fun WalletGetFirmwareVersionRequest(wallet: Pointer, len: SizeTByReference): Pointer
   external fun WalletGetFirmwareVersionResponse(
     wallet: Pointer,
     response: ByteArray,
@@ -159,12 +219,9 @@ object CSDK {
     VersionLength: SizeTByReference
   ): Pointer
 
-  external fun WalletResetWalletRequest(
-    wallet: Pointer,
-    bytesCount: SizeTByReference
-  ): Pointer
-
+  external fun WalletResetWalletRequest(wallet: Pointer, bytesCount: SizeTByReference): Pointer
   external fun WalletResetWalletResponse(wallet: Pointer, response: ByteArray, length: Int): Int
+
   external fun WalletSelectWalletRequest(
     wallet: Pointer,
     aid: ByteArray,
@@ -213,6 +270,7 @@ object CSDK {
   ): Pointer
 
   external fun WalletStoreDataPINResponse(wallet: Pointer, response: ByteArray, length: Int): Int
+
   external fun WalletSignHashRequest(
     wallet: Pointer,
     bipPath: ByteArray,
@@ -246,65 +304,7 @@ object CSDK {
     len: SizeTByReference
   ): Int
 
-  external fun ExtendedKey_getPubKey(
-    extendedKey: Pointer,
-    bytesCount: SizeTByReference
-  ): Pointer
-
-  external fun ExtendedKey_getChainCode(
-    extendedKey: Pointer,
-    bytesCount: SizeTByReference
-  ): Pointer
-
-  @Structure.FieldOrder("count", "addr")
-  class ByteVector : Structure {
-    @JvmField
-    var count: Int = 0
-
-    @JvmField
-    var addr: Pointer? = null
-
-    constructor(pointer: Pointer) : super(pointer) {
-      read()
-    }
-
-    constructor(bytes: ByteArray) : super() {
-      addr = Memory(bytes.size.toLong()).apply { write(0, bytes, 0, bytes.size) }
-      count = bytes.size
-      allocateMemory()
-      write()
-    }
-
-    override fun getFieldOrder(): List<String> = listOf("count", "addr")
-  }
-
-  @Structure.FieldOrder("count", "apdu", "extended_apdu")
-  class APDUSequence(pointer: Pointer) : Structure(pointer, ALIGN_NONE) {
-    @JvmField
-    var count: Int = 0
-
-    @JvmField
-    var apdu: Pointer? = null
-
-    @JvmField
-    var extended_apdu: Boolean = false
-
-    init {
-      useMemory(pointer)
-      read()
-    }
-
-    override fun getFieldOrder(): List<String> = listOf("count", "apdu", "extended_apdu")
-
-    fun getChain(): Array<ByteArray> {
-      val byteVectorSize =
-        Native.getNativeSize(ByteVector::class.java)
-      return Array(count) { index ->
-        val byteVectorPointer = apdu!!.share(index * byteVectorSize.toLong())
-        val byteVector = ByteVector(byteVectorPointer)
-        byteVector.addr!!.getByteArray(0, byteVector.count)
-      }
-    }
-  }
+  // TODO: Rename for public API
+  external fun ExtendedKey_getPubKey(extendedKey: Pointer, bytesCount: SizeTByReference): Pointer
+  external fun ExtendedKey_getChainCode(extendedKey: Pointer, bytesCount: SizeTByReference): Pointer
 }
-

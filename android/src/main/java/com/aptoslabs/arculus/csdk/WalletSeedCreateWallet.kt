@@ -4,7 +4,7 @@ import com.sun.jna.Pointer
 
 class WalletSeedCreateWallet(wallet: Pointer, private val nbrOfWords: Int) :
   CSDKAPICall<String>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val len = SizeTByReference()
 
     val pointer = CSDK.WalletSeedCreateWalletRequest(wallet, len, nbrOfWords)

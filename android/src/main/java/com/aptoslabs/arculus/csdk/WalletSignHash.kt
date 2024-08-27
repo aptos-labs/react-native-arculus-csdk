@@ -10,12 +10,12 @@ class WalletSignHash(
   private val algorithm: Byte,
   private val hash: String
 ) : CSDKAPIChainCall<String>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val pathBytes = path.toByteArray()
-    val pathPointer = CSDK.createByteVector(pathBytes)
+    val pathPointer = CSDK.CreateByteVector(pathBytes)
 
     val hashBytes = hexStringToByteArray(hash)
-    val hashPointer = CSDK.createByteVector(hashBytes)
+    val hashPointer = CSDK.CreateByteVector(hashBytes)
 
     val apdu = PointerByReference()
 
@@ -30,9 +30,9 @@ class WalletSignHash(
 
     validateWalletResponse(rc)
 
-    val apduSequence = CSDK.getAPDUSequenceFromResult(apdu)
+    val apduSequence = CSDK.GetAPDUSequenceFromResult(apdu)
 
-    return apduSequence.getChain()
+    return apduSequence.GetChain()
   }
 
   override suspend fun response(bytes: ByteArray): String {

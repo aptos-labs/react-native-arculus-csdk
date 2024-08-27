@@ -8,7 +8,7 @@ class WalletGetPublicKeyFromPath(
   private val curve: Short
 ) :
   CSDKAPICall<Map<String, String>>(wallet) {
-  override suspend fun request(): Array<ByteArray> {
+  override suspend fun request(): Array<ByteArray?> {
     val bipPath = path.encodeToByteArray()
 
     val len = SizeTByReference()
