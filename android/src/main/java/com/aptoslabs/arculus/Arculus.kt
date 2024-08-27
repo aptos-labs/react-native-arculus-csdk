@@ -61,6 +61,18 @@ class Arculus(private val nfcSessionManager: NFCSessionManager) {
     }
   }
 
+  suspend fun getInfo(path: String, curve: Short): Map<String, String> {
+    return execute {
+      walletSelectWallet()
+
+      val gguid = walletGetGGUID()
+
+      val publicKey = walletGetPublicKeyFromPath(path, curve)
+
+      publicKey.plus(Pair("gguid", gguid))
+    }
+  }
+
   suspend fun resetWallet() {
     return execute {
       walletSelectWallet()

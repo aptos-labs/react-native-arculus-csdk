@@ -13,6 +13,12 @@ export const createWallet = (args: CreateAptosWalletArgs): Promise<string> =>
     nbrOfWords: 12,
   });
 
+export const getInfo = () =>
+  ArculusCard.getInfo({
+    path: CARD_CHAINS.APTOS.path,
+    curve: CARD_CHAINS.APTOS.curve,
+  });
+
 export const getPublicKey = () =>
   ArculusCard.getPublicKeyFromPath({
     path: CARD_CHAINS.APTOS.path,
@@ -31,6 +37,7 @@ export const signHash = (args: SignAptosHashArgs): Promise<string> =>
 
 const AptosCard = {
   createWallet,
+  getInfo,
   getPublicKey,
   signHash,
 };

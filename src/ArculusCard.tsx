@@ -33,6 +33,19 @@ const getFirmwareVersion = (): Promise<string> =>
 
 const getGGUID = (): Promise<string> => ReactNativeArculusCsdk.getGGUID();
 
+export type GetInfoArgs = {
+  path: string;
+  curve: number;
+};
+
+const getInfo = (
+  args: GetInfoArgs
+): Promise<{ gguid: string; publicKey: string; chainCodeKey: string }> => {
+  const { path, curve } = args;
+
+  return ReactNativeArculusCsdk.getInfo(path, curve);
+};
+
 export type GetPublicKeyFromPathArgs = {
   path: string;
   curve: number;
@@ -94,6 +107,7 @@ const ArculusCard = {
   createWallet,
   getFirmwareVersion,
   getGGUID,
+  getInfo,
   getPublicKeyFromPath,
   resetWallet,
   restoreWallet,

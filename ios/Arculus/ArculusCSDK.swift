@@ -68,6 +68,22 @@ class ArculusCSDK {
         }
     }
     
+    func getInfo(path: String, curve: UInt16) async throws -> [ String: String ] {
+        try await execute { tag in
+            let api = CSDKAPI(tag: tag)
+            
+            try await api.walletSelectWallet()
+            
+            let gguid = try await api.walletGetGGUID()
+            
+            var info = try await api.walletGetPublicKeyFromPath(path: path, curve: curve)
+            
+            info["gguid"] = gguid
+            
+            return info
+        }
+    }
+    
     func getPublicKeyFromPath(path: String, curve: UInt16) async throws -> [ String: String ] {
         try await execute { tag in
             let api = CSDKAPI(tag: tag)

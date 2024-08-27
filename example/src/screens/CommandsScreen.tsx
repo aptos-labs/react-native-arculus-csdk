@@ -43,6 +43,13 @@ const sections: ReadonlyArray<SectionListData<Command, { title: string }>> = [
         output: 'GGUID',
       },
       {
+        title: 'Get info',
+        inputs: ['path', 'curve'],
+        handler: ({ curve, ...args }) =>
+          ArculusCard.getInfo({ ...args, curve: Number(curve) }),
+        output: 'Info',
+      },
+      {
         title: 'Get public key from path',
         inputs: ['path', 'curve'],
         handler: ({ curve, ...args }) =>
@@ -88,6 +95,12 @@ const sections: ReadonlyArray<SectionListData<Command, { title: string }>> = [
         inputs: ['pin'],
         handler: AptosCard.createWallet,
         output: 'Phrase',
+      },
+      {
+        title: 'Get info',
+        inputs: [],
+        handler: AptosCard.getInfo,
+        output: 'Info',
       },
       {
         title: 'Get public key',

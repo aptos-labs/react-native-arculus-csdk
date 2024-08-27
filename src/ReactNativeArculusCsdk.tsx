@@ -5,6 +5,10 @@ type ReactNativeArculusCsdkType = {
   createWallet(pin: string, nbrOfWords: number): Promise<string>;
   getFirmwareVersion(): Promise<string>;
   getGGUID(): Promise<string>;
+  getInfo(
+    path: string,
+    curve: number
+  ): Promise<{ gguid: string; publicKey: string; chainCodeKey: string }>;
   getPublicKeyFromPath(
     path: string,
     curve: number

@@ -45,6 +45,12 @@ class RNArculusCSDK: ArculusCSDK {
         }
     }
     
+    func getInfo(path: String, curve: UInt16) {
+        handle {
+            try await super.getInfo(path: path, curve: curve)
+        }
+    }
+    
     func getPublicKeyFromPath(path: String, curve: UInt16) {
         handle {
             try await super.getPublicKeyFromPath(path: path, curve: curve)

@@ -40,6 +40,17 @@ class ReactNativeArculusCsdk: NSObject {
             .getGGUID()
     }
 
+    @objc(getInfo:withCurve:withResolver:withRejecter:)
+    func getInfo(
+        path: String,
+        curve: NSNumber,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        RNArculusCSDK(resolve: resolve, reject: reject)
+            .getInfo(path: path, curve: curve.uint16Value)
+    }
+
     @objc(getPublicKeyFromPath:withCurve:withResolver:withRejecter:)
     func getPublicKeyFromPath(
         path: String,

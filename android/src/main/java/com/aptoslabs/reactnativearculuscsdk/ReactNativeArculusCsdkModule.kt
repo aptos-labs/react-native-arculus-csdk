@@ -1,6 +1,5 @@
 package com.aptoslabs.reactnativearculuscsdk
 
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -49,17 +48,16 @@ class ReactNativeArculusCsdkModule(reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
+  fun getInfo(path: String, curve: Int, promise: Promise) {
+    rnArculus.handleMap(promise) {
+      getInfo(path, curve.toShort())
+    }
+  }
+
+  @ReactMethod
   fun getPublicKeyFromPath(path: String, curve: Int, promise: Promise) {
-    rnArculus.handle(promise) {
-      val map = getPublicKeyFromPath(path, curve.toShort())
-
-      val result = Arguments.createMap()
-
-      map.forEach { (key, value) ->
-        result.putString(key, value)
-      }
-
-      result
+    rnArculus.handleMap(promise) {
+      getPublicKeyFromPath(path, curve.toShort())
     }
   }
 

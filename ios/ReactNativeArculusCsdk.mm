@@ -18,6 +18,11 @@ RCT_EXTERN_METHOD(getFirmwareVersion:(nonnull RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getGGUID:(nonnull RCTPromiseResolveBlock)resolve
                   withRejecter:(nonnull RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getInfo:(nonnull NSString *)path
+                  withCurve:(nonnull NSNumber *)curve
+                  withResolver:(nonnull RCTPromiseResolveBlock)resolve
+                  withRejecter:(nonnull RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(getPublicKeyFromPath:(nonnull NSString *)path
                   withCurve:(nonnull NSNumber *)curve
                   withResolver:(nonnull RCTPromiseResolveBlock)resolve
