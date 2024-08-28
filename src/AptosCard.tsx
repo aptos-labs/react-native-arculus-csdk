@@ -5,6 +5,15 @@ import ArculusCard, {
 
 import { CARD_CHAINS } from './constants';
 
+const {
+  changePIN,
+  getFirmwareVersion,
+  getGGUID,
+  resetWallet,
+  restoreWallet,
+  verifyPIN,
+} = ArculusCard;
+
 export type CreateAptosWalletArgs = Omit<CreateWalletArgs, 'nbrOfWords'>;
 
 export const createWallet = (args: CreateAptosWalletArgs): Promise<string> =>
@@ -36,10 +45,16 @@ export const signHash = (args: SignAptosHashArgs): Promise<string> =>
   });
 
 const AptosCard = {
+  changePIN,
   createWallet,
+  getFirmwareVersion,
+  getGGUID,
   getInfo,
   getPublicKey,
+  resetWallet,
+  restoreWallet,
   signHash,
+  verifyPIN,
 };
 
 export default AptosCard;

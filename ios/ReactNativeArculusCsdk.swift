@@ -1,5 +1,7 @@
 @objc(ReactNativeArculusCsdk)
 class ReactNativeArculusCsdk: NSObject {
+    private let rnArculus = RNArculus()
+    
     @objc(changePIN:withNewPIN:withResolver:withRejecter:)
     func changePIN(
         oldPIN: String,
@@ -7,10 +9,11 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .changePIN(oldPIN: oldPIN, newPIN: newPIN)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.changePIN(oldPIN: oldPIN, newPIN: newPIN)
+        }
     }
-
+    
     @objc(createWallet:withNumberOfWords:withResolver:withRejecter:)
     func createWallet(
         pin: String,
@@ -18,28 +21,31 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .createWallet(pin: pin, nbrOfWords: nbrOfWords.intValue)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.createWallet(pin: pin, nbrOfWords: nbrOfWords.intValue)
+        }
     }
-
+    
     @objc(getFirmwareVersion:withRejecter:)
     func getFirmwareVersion(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .getFirmwareVersion()
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.getFirmwareVersion()
+        }
     }
-
+    
     @objc(getGGUID:withRejecter:)
     func getGGUID(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .getGGUID()
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.getGGUID()
+        }
     }
-
+    
     @objc(getInfo:withCurve:withResolver:withRejecter:)
     func getInfo(
         path: String,
@@ -47,10 +53,11 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .getInfo(path: path, curve: curve.uint16Value)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.getInfo(path: path, curve: curve.uint16Value)
+        }
     }
-
+    
     @objc(getPublicKeyFromPath:withCurve:withResolver:withRejecter:)
     func getPublicKeyFromPath(
         path: String,
@@ -58,19 +65,21 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .getPublicKeyFromPath(path: path, curve: curve.uint16Value)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.getPublicKeyFromPath(path: path, curve: curve.uint16Value)
+        }
     }
-
+    
     @objc(resetWallet:withRejecter:)
     func resetWallet(
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .resetWallet()
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.resetWallet()
+        }
     }
-
+    
     @objc(restoreWallet:withMnemonicSentence:withResolver:withRejecter:)
     func restoreWallet(
         pin: String,
@@ -78,10 +87,11 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .restoreWallet(pin: pin, mnemonicSentence: mnemonicSentence)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.restoreWallet(pin: pin, mnemonicSentence: mnemonicSentence)
+        }
     }
-
+    
     @objc(signHash:withPath:withCurve:withAlgorithm:withHash:withResolver:withRejecter:)
     func signHash(
         pin: String,
@@ -92,17 +102,19 @@ class ReactNativeArculusCsdk: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .signHash(pin: pin, path: path, curve: curve.uint16Value, algorithm: algorithm.uint8Value, hash: hash)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.signHash(pin: pin, path: path, curve: curve.uint16Value, algorithm: algorithm.uint8Value, hash: hash)
+        }
     }
-
+    
     @objc(verifyPIN:withResolver:withRejecter:)
     func verifyPIN(
         pin: String,
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        RNArculusCSDK(resolve: resolve, reject: reject)
-            .verifyPIN(pin: pin)
+        rnArculus.handle(resolve: resolve, reject: reject) {
+            try await $0.verifyPIN(pin: pin)
+        }
     }
 }

@@ -25,18 +25,14 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
     reactContext.addLifecycleEventListener(this)
   }
 
-  override fun close() {
-    invalidateSession()
-  }
-
-  override suspend fun beginSession(): IsoDep {
+  override suspend fun getTag(): IsoDep {
     return suspendCoroutine { continuation -> this.continuation = continuation }
   }
 
-  override fun invalidateSession() {
+  override fun close() {
     continuation = null
 
-    super.invalidateSession()
+    super.close()
   }
 
   override fun onActivityResult(
@@ -49,7 +45,7 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
 
   override fun onNewIntent(intent: Intent) {
     try {
-      val isoDep = handleIntent(intent) ?: return
+      val isoDep = handleTagDetection(intent) ?: return
 
       this.isoDep = isoDep
 
@@ -60,15 +56,15 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
   }
 
   override fun onHostDestroy() {
-    invalidateSession()
+    close()
   }
 
   override fun onHostPause() {
-    reactContext.currentActivity?.let { disableForegroundDispatch(it) }
+    reactContext.currentActivity?.let { cancelScanning(it) }
   }
 
   override fun onHostResume() {
-    reactContext.currentActivity?.let { enableForegroundDispatch(it) }
+    reactContext.currentActivity?.let { startScanning(it) }
   }
 }
 

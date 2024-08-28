@@ -5,13 +5,13 @@ import com.aptoslabs.arculus.csdk.CSDKAPI
 class Arculus(private val nfcSessionManager: NFCSessionManager) {
   private suspend fun <ResultType> execute(sendCommands: suspend CSDKAPI.() -> ResultType): ResultType {
     try {
-      val tag = nfcSessionManager.beginSession()
+      val tag = nfcSessionManager.getTag()
 
       CSDKAPI(tag).use {
         return it.sendCommands()
       }
     } finally {
-      nfcSessionManager.invalidateSession()
+      nfcSessionManager.close()
     }
   }
 

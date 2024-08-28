@@ -11,24 +11,24 @@ import android.nfc.tech.IsoDep
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 
+class NoCompatibleTagsFoundException : Exception("No compatible tags found")
+
 abstract class NFCSessionManager(context: Context) {
   private val nfcAdapter = NfcAdapter.getDefaultAdapter(context)
 
   protected var isoDep: IsoDep? = null
 
-  abstract suspend fun beginSession(): IsoDep
+  abstract suspend fun getTag(): IsoDep
 
-  open fun invalidateSession() {
-    isoDep?.let {
-      try {
-        it.close()
-      } finally {
-        isoDep = null
-      }
+  open fun close() {
+    try {
+      isoDep?.close()
+    } finally {
+      isoDep = null
     }
   }
 
-  protected fun handleIntent(intent: Intent): IsoDep? {
+  protected fun handleTagDetection(intent: Intent): IsoDep? {
     val action = intent.action ?: return null
 
     if (NfcAdapter.ACTION_TECH_DISCOVERED != action && NfcAdapter.ACTION_TAG_DISCOVERED != action) return null
@@ -38,14 +38,14 @@ abstract class NFCSessionManager(context: Context) {
     } else {
       @Suppress("DEPRECATION")
       intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-    } ?: throw Exception("No NFC tag available")
+    } ?: throw NoCompatibleTagsFoundException()
 
     this.isoDep = IsoDep.get(tag).apply { connect() }
 
-    return this.isoDep ?: throw Exception("IsoDep technology not supported")
+    return this.isoDep ?: throw NoCompatibleTagsFoundException()
   }
 
-  protected fun enableForegroundDispatch(activity: Activity) {
+  protected fun startScanning(activity: Activity) {
     val requestCode = 0
 
     val intent = Intent(activity, activity::class.java).apply {
@@ -63,7 +63,7 @@ abstract class NFCSessionManager(context: Context) {
     nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilters, techListsArray)
   }
 
-  protected fun disableForegroundDispatch(activity: Activity) {
+  protected fun cancelScanning(activity: Activity) {
     nfcAdapter?.disableForegroundDispatch(activity)
   }
 }
