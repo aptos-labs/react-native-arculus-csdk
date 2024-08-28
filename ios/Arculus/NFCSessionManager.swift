@@ -25,12 +25,10 @@ class NFCSessionManager: NSObject {
     
     func done() {
         session?.invalidate()
-        close()
     }
     
     func fail(errorMessage: String) {
         session?.invalidate(errorMessage: errorMessage)
-        close()
     }
     
     func startScanning(delegate: any NFCTagReaderSessionDelegate) {

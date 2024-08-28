@@ -1,9 +1,17 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  Vibration,
+  View,
+} from 'react-native';
 import { type RouteProp, useRoute } from '@react-navigation/native';
 
 import { Button } from '../components';
 import { type RootStackParamList } from '../types';
+import { useArculusCardConnectionStatus } from '@aptos-labs/react-native-arculus-csdk';
 
 const OutputScreen = () => {
   const {
@@ -46,8 +54,13 @@ const OutputScreen = () => {
     setOutput(JSON.stringify(await execute(), null, 2));
   };
 
+  const { status } = useArculusCardConnectionStatus({
+    onConnect: Vibration.vibrate,
+  });
+
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps={'handled'}>
+      <Text style={styles.status}>Connection status: {status}</Text>
       {command.inputs?.map((input) => (
         <View key={input}>
           <Text style={styles.label}>{input}</Text>
@@ -93,6 +106,10 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 17,
+  },
+  status: {
+    fontSize: 17,
+    textAlign: 'right',
   },
   output: {
     height: 180,

@@ -16,7 +16,7 @@ class NoCompatibleTagsFoundException : Exception("No compatible tags found")
 abstract class NFCSessionManager(context: Context) {
   private val nfcAdapter = NfcAdapter.getDefaultAdapter(context)
 
-  protected var isoDep: IsoDep? = null
+  private var isoDep: IsoDep? = null
 
   abstract suspend fun getTag(): IsoDep
 

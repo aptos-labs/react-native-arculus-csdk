@@ -7,6 +7,8 @@ import com.aptoslabs.arculus.NFCSessionManager
 import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.WritableMap
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -25,14 +27,26 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
     reactContext.addLifecycleEventListener(this)
   }
 
+  private fun sendEvent(eventName: String, params: WritableMap?) {
+    reactContext
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+      .emit(eventName, params)
+  }
+
   override suspend fun getTag(): IsoDep {
-    return suspendCoroutine { continuation -> this.continuation = continuation }
+    return suspendCoroutine { it ->
+      continuation = it
+
+      sendEvent("ArculusCardStartScanning", null)
+    }
   }
 
   override fun close() {
     continuation = null
 
     super.close()
+
+    sendEvent("ArculusCardConnectionClosed", null)
   }
 
   override fun onActivityResult(
@@ -47,7 +61,7 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
     try {
       val isoDep = handleTagDetection(intent) ?: return
 
-      this.isoDep = isoDep
+      sendEvent("ArculusCardConnected", null)
 
       continuation?.resume(isoDep)
     } catch (e: Exception) {

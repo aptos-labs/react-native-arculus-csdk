@@ -1,8 +1,11 @@
+import React
+
 class RNArculus {
-    private let nfcSessionManager = RNNFCSessionManager()
+    private let nfcSessionManager: RNNFCSessionManager
     private let arculus: Arculus
     
-    init() {
+    init(eventEmitter: RCTEventEmitter) {
+        nfcSessionManager = RNNFCSessionManager(eventEmitter: eventEmitter)
         arculus = Arculus(nfcSessionManager: nfcSessionManager)
     }
     

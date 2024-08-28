@@ -1,8 +1,14 @@
 import CoreNFC
+import React
 
 class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
     private var continuation: CheckedContinuation<NFCISO7816Tag, Error>?
     private let semaphore = DispatchSemaphore(value: 1)
+    private let eventEmitter: RCTEventEmitter
+    
+    init(eventEmitter: RCTEventEmitter) {
+        self.eventEmitter = eventEmitter
+    }
     
     override func getTag() async throws -> NFCISO7816Tag {
         return try await withCheckedThrowingContinuation { continuation in
@@ -22,18 +28,24 @@ class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
         semaphore.signal()
         
         super.close()
+        
+        eventEmitter.sendEvent(withName: "ArculusCardConnectionClosed", body: nil)
     }
     
     override func done() {
         semaphore.signal()
         
         super.done()
+        
+        close()
     }
     
     override func fail(errorMessage: String) {
         semaphore.signal()
         
         super.fail(errorMessage: errorMessage)
+        
+        close()
     }
     
     func tagReaderSession(_ session: NFCTagReaderSession, didInvalidateWithError error: any Error) {
@@ -46,17 +58,21 @@ class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
         close()
     }
     
-    func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {        
+    func tagReaderSession(_ session: NFCTagReaderSession, didDetect tags: [NFCTag]) {
         handleTagDetection(tags: tags) { result in
             switch result {
             case let .failure(error):
                 self.continuation?.resume(throwing: error)
             case let .success(tag):
                 self.continuation?.resume(returning: tag)
+                
+                self.eventEmitter.sendEvent(withName: "ArculusCardConnected", body: nil)
             }
             self.continuation = nil
         }
     }
     
-    func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {}
+    func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
+        eventEmitter.sendEvent(withName: "ArculusCardStartScanning", body: nil)
+    }
 }

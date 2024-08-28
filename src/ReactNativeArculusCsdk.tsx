@@ -1,6 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
+import type { NativeModule } from 'react-native/Libraries/EventEmitter/NativeEventEmitter';
 
-type ReactNativeArculusCsdkType = {
+type ReactNativeArculusCsdkType = NativeModule & {
   changePIN(oldPIN: string, newPIN: string): Promise<void>;
   createWallet(pin: string, nbrOfWords: number): Promise<string>;
   getFirmwareVersion(): Promise<string>;

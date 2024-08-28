@@ -1,6 +1,10 @@
+import React
+
 @objc(ReactNativeArculusCsdk)
-class ReactNativeArculusCsdk: NSObject {
-    private let rnArculus = RNArculus()
+class ReactNativeArculusCsdk: RCTEventEmitter {
+    private lazy var rnArculus: RNArculus = {
+        return RNArculus(eventEmitter: self)
+    }()
     
     @objc(changePIN:withNewPIN:withResolver:withRejecter:)
     func changePIN(
@@ -116,5 +120,13 @@ class ReactNativeArculusCsdk: NSObject {
         rnArculus.handle(resolve: resolve, reject: reject) {
             try await $0.verifyPIN(pin: pin)
         }
+    }
+    
+    override func supportedEvents() -> [String]! {
+        return ["ArculusCardConnected", "ArculusCardConnectionClosed", "ArculusCardStartScanning"]
+    }
+    
+    override class func requiresMainQueueSetup() -> Bool {
+        return true
     }
 }
