@@ -40,7 +40,11 @@ abstract class NFCSessionManager(context: Context) {
       intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
     } ?: throw NoCompatibleTagsFoundException()
 
-    this.isoDep = IsoDep.get(tag).apply { connect() }
+    this.isoDep = IsoDep.get(tag).apply {
+      connect()
+
+      timeout = 15000
+    }
 
     return this.isoDep ?: throw NoCompatibleTagsFoundException()
   }
