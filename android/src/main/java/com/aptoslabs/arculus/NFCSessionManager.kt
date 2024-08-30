@@ -49,7 +49,7 @@ abstract class NFCSessionManager(context: Context) {
     return this.isoDep ?: throw NoCompatibleTagsFoundException()
   }
 
-  protected fun startScanning(activity: Activity) {
+  protected fun enableForegroundDispatch(activity: Activity) {
     val requestCode = 0
 
     val intent = Intent(activity, activity::class.java).apply {
@@ -67,7 +67,7 @@ abstract class NFCSessionManager(context: Context) {
     nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, intentFilters, techListsArray)
   }
 
-  protected fun cancelScanning(activity: Activity) {
+  protected fun disableForegroundDispatch(activity: Activity) {
     nfcAdapter?.disableForegroundDispatch(activity)
   }
 }

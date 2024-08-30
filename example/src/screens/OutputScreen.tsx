@@ -55,7 +55,7 @@ const OutputScreen = () => {
   };
 
   const { status } = useArculusCardConnectionStatus({
-    onConnect: Vibration.vibrate,
+    onConnectionOpened: Vibration.vibrate,
   });
 
   return (

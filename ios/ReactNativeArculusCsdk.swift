@@ -123,7 +123,7 @@ class ReactNativeArculusCsdk: RCTEventEmitter {
     }
     
     override func supportedEvents() -> [String]! {
-        return ["ArculusCardConnected", "ArculusCardConnectionClosed", "ArculusCardStartScanning"]
+        return ["ConnectionClosed", "ConnectionOpened", "ScanningStarted"]
     }
     
     override class func requiresMainQueueSetup() -> Bool {

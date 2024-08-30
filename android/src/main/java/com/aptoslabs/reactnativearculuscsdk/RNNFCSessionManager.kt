@@ -34,10 +34,10 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
   }
 
   override suspend fun getTag(): IsoDep {
-    return suspendCoroutine { it ->
+    return suspendCoroutine {
       continuation = it
 
-      sendEvent("ArculusCardStartScanning", null)
+      sendEvent("ScanningStarted", null)
     }
   }
 
@@ -46,7 +46,7 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
 
     super.close()
 
-    sendEvent("ArculusCardConnectionClosed", null)
+    sendEvent("ConnectionClosed", null)
   }
 
   override fun onActivityResult(
@@ -59,9 +59,11 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
 
   override fun onNewIntent(intent: Intent) {
     try {
+      if (continuation == null) return
+
       val isoDep = handleTagDetection(intent) ?: return
 
-      sendEvent("ArculusCardConnected", null)
+      sendEvent("ConnectionOpened", null)
 
       continuation?.resume(isoDep)
     } catch (e: Exception) {
@@ -74,11 +76,11 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
   }
 
   override fun onHostPause() {
-    reactContext.currentActivity?.let { cancelScanning(it) }
+    reactContext.currentActivity?.let { disableForegroundDispatch(it) }
   }
 
   override fun onHostResume() {
-    reactContext.currentActivity?.let { startScanning(it) }
+    reactContext.currentActivity?.let { enableForegroundDispatch(it) }
   }
 }
 

@@ -29,7 +29,7 @@ class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
         
         super.close()
         
-        eventEmitter.sendEvent(withName: "ArculusCardConnectionClosed", body: nil)
+        eventEmitter.sendEvent(withName: "ConnectionClosed", body: nil)
     }
     
     override func done() {
@@ -66,13 +66,13 @@ class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
             case let .success(tag):
                 self.continuation?.resume(returning: tag)
                 
-                self.eventEmitter.sendEvent(withName: "ArculusCardConnected", body: nil)
+                self.eventEmitter.sendEvent(withName: "ConnectionOpened", body: nil)
             }
             self.continuation = nil
         }
     }
     
     func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
-        eventEmitter.sendEvent(withName: "ArculusCardStartScanning", body: nil)
+        eventEmitter.sendEvent(withName: "ConnectionClosed", body: nil)
     }
 }

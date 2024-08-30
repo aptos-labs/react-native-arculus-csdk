@@ -2,10 +2,10 @@ import { NativeEventEmitter } from 'react-native';
 
 import ReactNativeArculusCsdk from './ReactNativeArculusCsdk';
 
-type ReactNativeArculusCsdkEvents =
-  | 'ArculusCardConnected'
-  | 'ArculusCardConnectionClosed'
-  | 'ArculusCardStartScanning';
+export type ReactNativeArculusCsdkEvent =
+  | 'ConnectionClosed'
+  | 'ConnectionOpened'
+  | 'ScanningStarted';
 
 class ReactNativeArculusCsdkEventEmitter extends NativeEventEmitter {
   constructor() {
@@ -13,7 +13,7 @@ class ReactNativeArculusCsdkEventEmitter extends NativeEventEmitter {
   }
 
   override addListener(
-    eventType: ReactNativeArculusCsdkEvents,
+    eventType: ReactNativeArculusCsdkEvent,
     listener: (event: any) => void,
     context?: Object
   ) {
