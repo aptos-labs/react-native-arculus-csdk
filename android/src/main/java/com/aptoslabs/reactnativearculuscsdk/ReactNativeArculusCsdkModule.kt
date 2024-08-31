@@ -16,7 +16,10 @@ class ReactNativeArculusCsdkModule(private val reactContext: ReactApplicationCon
   }
 
   private val eventEmitter = RNEventEmitter(reactContext)
-  private val rnArculus = RNArculus(reactContext, eventEmitter)
+  private val nfcSessionManager = RNNFCScannerService(reactContext, eventEmitter)
+  private val rnArculus = RNArculus(nfcSessionManager)
+
+  // region API
 
   @ReactMethod
   fun changePIN(oldPIN: String, newPIN: String, promise: Promise) {
@@ -102,6 +105,8 @@ class ReactNativeArculusCsdkModule(private val reactContext: ReactApplicationCon
       null
     }
   }
+
+  // endregion
 
   @ReactMethod
   fun addListener(eventName: String) {

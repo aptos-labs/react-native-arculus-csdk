@@ -2,16 +2,12 @@ package com.aptoslabs.arculus
 
 import com.aptoslabs.arculus.csdk.CSDKAPI
 
-class Arculus(private val nfcSessionManager: NFCSessionManager) {
+class Arculus(private val nfcConnectionProvider: NFCConnectionProvider) {
   private suspend fun <ResultType> execute(sendCommands: suspend CSDKAPI.() -> ResultType): ResultType {
-    try {
-      val tag = nfcSessionManager.getTag()
-
-      CSDKAPI(tag).use {
-        return it.sendCommands()
+    return nfcConnectionProvider.connect { tag ->
+      CSDKAPI(tag).use { api ->
+        api.sendCommands()
       }
-    } finally {
-      nfcSessionManager.close()
     }
   }
 

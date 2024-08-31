@@ -5,7 +5,8 @@ import ReactNativeArculusCsdk from './ReactNativeArculusCsdk';
 export type ReactNativeArculusCsdkEvent =
   | 'ConnectionClosed'
   | 'ConnectionOpened'
-  | 'ScanningStarted';
+  | 'ScanningStarted'
+  | 'ScanningStopped';
 
 class ReactNativeArculusCsdkEventEmitter extends NativeEventEmitter {
   constructor() {
