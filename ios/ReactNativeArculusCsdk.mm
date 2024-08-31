@@ -36,6 +36,8 @@ RCT_EXTERN_METHOD(restoreWallet:(nonnull NSString *)pin
                   withResolver:(nonnull RCTPromiseResolveBlock)resolve
                   withRejecter:(nonnull RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setNFCTagReaderAlertMessage:(nonnull NSString *)message)
+
 RCT_EXTERN_METHOD(signHash:(nonnull NSString *)pin
                   withPath:(nonnull NSString *)path
                   withCurve:(nonnull NSNumber *)curve

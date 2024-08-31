@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -11,7 +11,10 @@ import { type RouteProp, useRoute } from '@react-navigation/native';
 
 import { Button } from '../components';
 import { type RootStackParamList } from '../types';
-import { useArculusCardConnectionStatus } from '@aptos-labs/react-native-arculus-csdk';
+import {
+  ArculusCard,
+  useArculusCardConnectionStatus,
+} from '@aptos-labs/react-native-arculus-csdk';
 
 const OutputScreen = () => {
   const {
@@ -55,7 +58,10 @@ const OutputScreen = () => {
   };
 
   const { status } = useArculusCardConnectionStatus({
-    onConnectionOpened: Vibration.vibrate,
+    onConnectionOpened: useCallback(() => {
+      Vibration.vibrate();
+      ArculusCard.setNFCTagReaderAlertMessage('Connection opened');
+    }, []),
   });
 
   return (

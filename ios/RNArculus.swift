@@ -20,4 +20,8 @@ class RNArculus {
             }
         }
     }
+    
+    func setNFCTagReaderAlertMessage(message: String) {
+        nfcSessionManager.setSessionAlertMessage(message: message)
+    }
 }

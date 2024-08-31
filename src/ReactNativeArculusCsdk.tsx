@@ -16,6 +16,7 @@ type ReactNativeArculusCsdkType = NativeModule & {
   ): Promise<{ publicKey: string; chainCodeKey: string }>;
   resetWallet(): Promise<void>;
   restoreWallet(pin: string, mnemonicSentence: string): Promise<void>;
+  setNFCTagReaderAlertMessage(message: string): void;
   signHash(
     pin: string,
     path: string,

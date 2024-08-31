@@ -1,5 +1,6 @@
 import ReactNativeArculusCsdk from './ReactNativeArculusCsdk';
 import { validatePin } from './validators';
+import { Platform } from 'react-native';
 
 export type ChangePinArgs = {
   oldPIN: string;
@@ -74,6 +75,12 @@ const restoreWallet = (args: RestoreWalletArgs): Promise<void> => {
   return ReactNativeArculusCsdk.restoreWallet(pin, mnemonicSentence);
 };
 
+const setNFCTagReaderAlertMessage = (message: string) => {
+  if (Platform.OS === 'ios') {
+    ReactNativeArculusCsdk.setNFCTagReaderAlertMessage(message);
+  }
+};
+
 export type SignHashArgs = {
   pin: string;
   path: string;
@@ -111,6 +118,7 @@ const ArculusCard = {
   getPublicKeyFromPath,
   resetWallet,
   restoreWallet,
+  setNFCTagReaderAlertMessage,
   signHash,
   verifyPIN,
 };

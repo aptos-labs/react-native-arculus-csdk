@@ -15,6 +15,10 @@ class NFCSessionManager: NSObject {
         }
     }
     
+    func setSessionAlertMessage(message: String) {
+        session?.alertMessage = message
+    }
+    
     func getTag() async throws -> NFCISO7816Tag {
         fatalError("getTag must be overridden")
     }

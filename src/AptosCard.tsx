@@ -11,6 +11,7 @@ const {
   getGGUID,
   resetWallet,
   restoreWallet,
+  setNFCTagReaderAlertMessage,
   verifyPIN,
 } = ArculusCard;
 
@@ -53,6 +54,7 @@ const AptosCard = {
   getPublicKey,
   resetWallet,
   restoreWallet,
+  setNFCTagReaderAlertMessage,
   signHash,
   verifyPIN,
 };

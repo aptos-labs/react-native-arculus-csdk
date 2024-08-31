@@ -96,6 +96,11 @@ class ReactNativeArculusCsdk: RCTEventEmitter {
         }
     }
     
+    @objc(setNFCTagReaderAlertMessage:)
+    func setNFCTagReaderAlertMessage(message: String) {
+        rnArculus.setNFCTagReaderAlertMessage(message: message)
+    }
+    
     @objc(signHash:withPath:withCurve:withAlgorithm:withHash:withResolver:withRejecter:)
     func signHash(
         pin: String,
