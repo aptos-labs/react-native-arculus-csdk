@@ -1,9 +1,9 @@
 package com.aptoslabs.reactnativearculuscsdk
 
 import com.aptoslabs.arculus.Arculus
+import com.aptoslabs.arculus.NFCConnectionProvider
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,9 +30,8 @@ fun <K, V> toWritableMap(map: Map<K, V>): WritableMap {
   return result
 }
 
-class RNArculus(reactContext: ReactApplicationContext, eventEmitter: RNEventEmitter) {
-  private val nfcSessionManager = RNNFCSessionManager(reactContext, eventEmitter)
-  private val arculus = Arculus(nfcSessionManager)
+class RNArculus(nfcConnectionProvider: NFCConnectionProvider) {
+  private val arculus = Arculus(nfcConnectionProvider)
 
   fun <Result> handle(promise: Promise, execute: suspend Arculus.() -> Result) {
     CoroutineScope(Dispatchers.IO).launch {
