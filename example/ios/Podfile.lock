@@ -1,5 +1,5 @@
 PODS:
-  - aptos-labs-react-native-arculus-csdk (1.3.0):
+  - aptos-labs-react-native-arculus-csdk (1.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1752,7 +1752,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  aptos-labs-react-native-arculus-csdk: a2123c7c4b5b3453e45b8b8f4e1ed8c6af9e5482
+  aptos-labs-react-native-arculus-csdk: c0c53de43422b59c8748351b2c280348c6930b2b
   boost: 4cb898d0bf20404aab1850c656dcea009429d6c1
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   FBLazyVector: 38bb611218305c3bc61803e287b8a81c6f63b619
