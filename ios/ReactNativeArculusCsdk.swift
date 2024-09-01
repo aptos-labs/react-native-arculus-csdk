@@ -127,6 +127,22 @@ class ReactNativeArculusCsdk: RCTEventEmitter {
         }
     }
     
+    private var hasListeners = false
+    
+    override func startObserving() {
+        hasListeners = true
+    }
+    
+    override func stopObserving() {
+        hasListeners = false
+    }
+    
+    override func sendEvent(withName name: String!, body: Any!) {
+        if(hasListeners) {
+            super.sendEvent(withName: name, body: body)
+        }
+    }
+    
     override func supportedEvents() -> [String]! {
         return ["ConnectionClosed", "ConnectionOpened", "ScanningStarted"]
     }

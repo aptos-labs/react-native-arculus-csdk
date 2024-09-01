@@ -30,8 +30,8 @@ fun <K, V> toWritableMap(map: Map<K, V>): WritableMap {
   return result
 }
 
-class RNArculus(reactContext: ReactApplicationContext) {
-  private val nfcSessionManager = RNNFCSessionManager(reactContext)
+class RNArculus(reactContext: ReactApplicationContext, eventEmitter: RNEventEmitter) {
+  private val nfcSessionManager = RNNFCSessionManager(reactContext, eventEmitter)
   private val arculus = Arculus(nfcSessionManager)
 
   fun <Result> handle(promise: Promise, execute: suspend Arculus.() -> Result) {

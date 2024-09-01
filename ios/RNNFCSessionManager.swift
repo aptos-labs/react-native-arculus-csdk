@@ -73,6 +73,6 @@ class RNNFCSessionManager : NFCSessionManager, NFCTagReaderSessionDelegate {
     }
     
     func tagReaderSessionDidBecomeActive(_ session: NFCTagReaderSession) {
-        eventEmitter.sendEvent(withName: "ConnectionClosed", body: nil)
+        eventEmitter.sendEvent(withName: "ScanningStarted", body: nil)
     }
 }

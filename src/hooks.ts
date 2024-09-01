@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import reactNativeArculusCsdkEventEmitter, {
   type ReactNativeArculusCsdkEvent,
@@ -36,20 +36,29 @@ export const useArculusCardConnectionStatus = (
 
   const [status, setStatus] = useState<ArculusCardConnectionStatus>('closed');
 
-  useArculusCardEvent('ConnectionClosed', () => {
-    setStatus('closed');
-    onConnectionClosed?.();
-  });
+  useArculusCardEvent(
+    'ConnectionClosed',
+    useCallback(() => {
+      setStatus('closed');
+      onConnectionClosed?.();
+    }, [onConnectionClosed])
+  );
 
-  useArculusCardEvent('ConnectionOpened', () => {
-    setStatus('open');
-    onConnectionOpened?.();
-  });
+  useArculusCardEvent(
+    'ConnectionOpened',
+    useCallback(() => {
+      setStatus('open');
+      onConnectionOpened?.();
+    }, [onConnectionOpened])
+  );
 
-  useArculusCardEvent('ScanningStarted', () => {
-    setStatus('scanning');
-    onScanningStarted?.();
-  });
+  useArculusCardEvent(
+    'ScanningStarted',
+    useCallback(() => {
+      setStatus('scanning');
+      onScanningStarted?.();
+    }, [onScanningStarted])
+  );
 
   return {
     isClosed: status === 'closed',

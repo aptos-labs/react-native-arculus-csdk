@@ -14,12 +14,28 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+class RNEventEmitter(private val reactContext: ReactApplicationContext) {
+  private var listenerCount = 0
 
-class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
-  NFCSessionManager(reactContext),
-  ActivityEventListener,
-  LifecycleEventListener,
-  AutoCloseable {
+  fun addListener(eventName: String) {
+    listenerCount += 1
+  }
+
+  fun removeListeners(count: Int) {
+    listenerCount -= count
+  }
+
+  fun sendEvent(eventName: String, params: WritableMap?) {
+    if (listenerCount > 0) {
+      reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+        .emit(eventName, params)
+    }
+  }
+}
+
+class RNNFCSessionManager(
+  private val reactContext: ReactApplicationContext, private val eventEmitter: RNEventEmitter
+) : NFCSessionManager(reactContext), ActivityEventListener, LifecycleEventListener, AutoCloseable {
   private var continuation: Continuation<IsoDep>? = null
 
   init {
@@ -27,17 +43,11 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
     reactContext.addLifecycleEventListener(this)
   }
 
-  private fun sendEvent(eventName: String, params: WritableMap?) {
-    reactContext
-      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-      .emit(eventName, params)
-  }
-
   override suspend fun getTag(): IsoDep {
     return suspendCoroutine {
       continuation = it
 
-      sendEvent("ScanningStarted", null)
+      eventEmitter.sendEvent("ScanningStarted", null)
     }
   }
 
@@ -46,14 +56,11 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
 
     super.close()
 
-    sendEvent("ConnectionClosed", null)
+    eventEmitter.sendEvent("ConnectionClosed", null)
   }
 
   override fun onActivityResult(
-    activity: Activity,
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
+    activity: Activity, requestCode: Int, resultCode: Int, data: Intent?
   ) {
   }
 
@@ -63,7 +70,7 @@ class RNNFCSessionManager(private val reactContext: ReactApplicationContext) :
 
       val isoDep = handleTagDetection(intent) ?: return
 
-      sendEvent("ConnectionOpened", null)
+      eventEmitter.sendEvent("ConnectionOpened", null)
 
       continuation?.resume(isoDep)
     } catch (e: Exception) {

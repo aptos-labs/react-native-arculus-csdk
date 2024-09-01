@@ -5,7 +5,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 
-class ReactNativeArculusCsdkModule(reactContext: ReactApplicationContext) :
+class ReactNativeArculusCsdkModule(private val reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
   companion object {
     const val NAME = "ReactNativeArculusCsdk"
@@ -15,7 +15,8 @@ class ReactNativeArculusCsdkModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
-  private val rnArculus = RNArculus(reactContext)
+  private val eventEmitter = RNEventEmitter(reactContext)
+  private val rnArculus = RNArculus(reactContext, eventEmitter)
 
   @ReactMethod
   fun changePIN(oldPIN: String, newPIN: String, promise: Promise) {
@@ -104,9 +105,11 @@ class ReactNativeArculusCsdkModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun addListener(eventName: String) {
+    eventEmitter.addListener(eventName)
   }
 
   @ReactMethod
   fun removeListeners(count: Int) {
+    eventEmitter.removeListeners(count)
   }
 }
